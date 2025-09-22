@@ -29,22 +29,25 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, onAddUser }) => 
         e.preventDefault();
         setError('');
 
-        if (!/^\d{8}$/.test(newUsername)) {
-            setError('La clave de usuario debe contener exactamente 8 dígitos numéricos.');
+        const trimmedUsername = newUsername.trim();
+
+        // Stricter validation for username (must be exactly 8 digits)
+        if (!/^\d{8}$/.test(trimmedUsername)) {
+            setError('La Clave de Usuario debe ser un número de exactamente 8 dígitos.');
             return;
         }
         if (newPassword.length !== 10) {
             setError('La contraseña debe tener exactamente 10 caracteres.');
             return;
         }
-        if (users.some(user => user.username.toLowerCase() === newUsername.toLowerCase())) {
-            setError('La clave de usuario ya existe.');
+        if (users.some(user => user.username === trimmedUsername)) {
+            setError('La Clave de Usuario ya existe.');
             return;
         }
 
         const newUser: User = {
             id: crypto.randomUUID(),
-            username: newUsername.trim(),
+            username: trimmedUsername,
             password: newPassword,
             role: newRole,
         };
@@ -99,7 +102,7 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, onAddUser }) => 
                         onChange={(e) => setNewUsername(e.target.value)}
                         required
                         pattern="\d{8}"
-                        title="La clave debe ser de 8 dígitos numéricos."
+                        title="La Clave de Usuario debe ser un número de exactamente 8 dígitos."
                         maxLength={8}
                     />
                     <Input
@@ -111,7 +114,7 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, onAddUser }) => 
                         required
                         minLength={10}
                         maxLength={10}
-                        title="La contraseña debe tener 10 caracteres."
+                        title="La contraseña debe tener exactamente 10 caracteres."
                     />
                     <Select
                         id="new-role"
