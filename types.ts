@@ -39,10 +39,23 @@ export interface Sale {
   customerType: CustomerType;
   idType: IdType;
   status: SaleStatus;
+  createdBy: string;
   folioSIACFile?: File;
   idFile1?: File;
   idFile2?: File;
   proofOfAddressFile?: File;
   portabilityFile1?: File;
   portabilityFile2?: File;
+}
+
+export enum UserRole {
+    Admin = 'admin',
+    User = 'user',
+}
+
+export interface User {
+    id: string;
+    username: string;
+    password?: string; // Password should be handled securely on a backend
+    role: UserRole;
 }

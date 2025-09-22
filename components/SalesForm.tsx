@@ -1,5 +1,6 @@
+
 import React, { useState, useMemo, useCallback, useRef } from 'react';
-import { Sale, ServiceType, PackageType, CustomerType, IdType, SaleStatus } from '../types';
+import { Sale, ServiceType, PackageType, CustomerType, IdType, SaleStatus, User } from '../types';
 import { PACKAGE_OPTIONS } from '../constants';
 import Card from './ui/Card';
 import Input from './ui/Input';
@@ -10,9 +11,10 @@ import FileInput from './ui/FileInput';
 
 interface SalesFormProps {
     onAddSale: (sale: Sale) => void;
+    user: User;
 }
 
-const SalesForm: React.FC<SalesFormProps> = ({ onAddSale }) => {
+const SalesForm: React.FC<SalesFormProps> = ({ onAddSale, user }) => {
     const formRef = useRef<HTMLFormElement>(null);
     const [fullName, setFullName] = useState('');
     const [captureDate, setCaptureDate] = useState(new Date().toISOString().split('T')[0]);
@@ -81,6 +83,7 @@ const SalesForm: React.FC<SalesFormProps> = ({ onAddSale }) => {
             customerType,
             idType,
             status: SaleStatus.Pendiente,
+            createdBy: user.username,
             folioSIACFile: folioSIACFile || undefined,
             idFile1: idFile1 || undefined,
             idFile2: idType === IdType.INE ? (idFile2 || undefined) : undefined,

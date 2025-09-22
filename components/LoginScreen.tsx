@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Card from './ui/Card';
 import Input from './ui/Input';
@@ -5,7 +6,7 @@ import Button from './ui/Button';
 import Logo from './ui/Logo';
 
 interface LoginScreenProps {
-    onLogin: (username: string) => void;
+    onLogin: (username: string, password: string) => boolean;
 }
 
 const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
@@ -16,11 +17,9 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
-        // Simulated authentication
-        if (username.trim() && password === 'password') {
-            onLogin(username);
-        } else {
-            setError('Usuario o contraseña incorrectos. (Pista: usa "password" como contraseña)');
+        const success = onLogin(username, password);
+        if (!success) {
+            setError('Usuario o contraseña incorrectos.');
         }
     };
 
@@ -58,6 +57,10 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                         </Button>
                     </form>
                 </Card>
+                 <p className="text-center text-xs text-slate-500 mt-4">
+                    Usuario admin: <code className="bg-slate-200 dark:bg-slate-700 px-1 rounded">admin</code>, 
+                    Contraseña: <code className="bg-slate-200 dark:bg-slate-700 px-1 rounded">admin123</code>
+                </p>
             </div>
         </div>
     );

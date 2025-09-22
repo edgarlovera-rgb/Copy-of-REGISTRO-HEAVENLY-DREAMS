@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { Sale, SaleStatus, ServiceType, PackageType } from '../types';
 import { STATUS_COLORS } from '../constants';
@@ -60,7 +61,13 @@ const FolioSearch: React.FC<FolioSearchProps> = ({ sales, onSaleSelect }) => {
     };
 
     const filteredSales = useMemo(() => {
-        return sales.filter(sale => {
+        let salesToShow = sales;
+
+        if (!searchTerm && !filterDate && !filterService && !filterPackage && !filterStatus) {
+            return salesToShow;
+        }
+
+        return salesToShow.filter(sale => {
             const searchTermLower = searchTerm.toLowerCase();
             if (searchTerm.trim() && !(sale.folioSIAC.toLowerCase().includes(searchTermLower) || sale.fullName.toLowerCase().includes(searchTermLower))) {
                 return false;
@@ -90,7 +97,7 @@ const FolioSearch: React.FC<FolioSearchProps> = ({ sales, onSaleSelect }) => {
         const headers = [
             'ID', 'Nombre Completo', 'Fecha de Captura', 'Folio SIAC',
             'Tipo de Servicio', 'Tipo de Paquete', 'Paquete Seleccionado',
-            'Tipo de Cliente', 'Tipo de Identificación', 'Estado',
+            'Tipo de Cliente', 'Tipo de Identificación', 'Estado', 'Registrado Por',
             'Archivo Folio SIAC', 'Archivo ID 1', 'Archivo ID 2',
             'Archivo Comprobante Domicilio', 'Archivo Portabilidad 1', 'Archivo Portabilidad 2'
         ];
@@ -107,6 +114,7 @@ const FolioSearch: React.FC<FolioSearchProps> = ({ sales, onSaleSelect }) => {
                 sale.customerType,
                 sale.idType,
                 sale.status,
+                sale.createdBy,
                 sale.folioSIACFile?.name || '',
                 sale.idFile1?.name || '',
                 sale.idFile2?.name || '',
@@ -143,7 +151,7 @@ const FolioSearch: React.FC<FolioSearchProps> = ({ sales, onSaleSelect }) => {
                     <Button variant="secondary" onClick={() => setShowAdvanced(!showAdvanced)}>
                         {showAdvanced ? 'Ocultar Filtros' : 'Filtros Avanzados'}
                     </Button>
-                    <Button variant="secondary" onClick={handleExportCSV} disabled={filteredSales.length === 0} Icon={DocumentArrowDownIcon}>
+                    <Button variant="secondary" onClick={handleExportCSV} disabled={sales.length === 0} Icon={DocumentArrowDownIcon}>
                         Exportar a CSV
                     </Button>
                 </div>
