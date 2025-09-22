@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Sale, SaleStatus, CustomerType, IdType } from '../types';
 import Card from './ui/Card';
@@ -84,16 +83,19 @@ const DocumentArrowDownIcon = (props: React.ComponentProps<'svg'>) => (
 
 const SaleDetailView: React.FC<SaleDetailViewProps> = ({ sale, onClose, onUpdateSaleStatus }) => {
     const [currentStatus, setCurrentStatus] = useState<SaleStatus>(sale.status);
+    const [isSaving, setIsSaving] = useState(false);
 
     useEffect(() => {
         setCurrentStatus(sale.status);
     }, [sale]);
 
     const handleSaveChanges = () => {
+        setIsSaving(true);
         onUpdateSaleStatus(sale.id, currentStatus);
+        setTimeout(() => setIsSaving(false), 2000); // Show "Guardado!" for 2 seconds
     };
 
-    const hasChanges = currentStatus !== sale.status;
+    const hasChanges = currentStatus !== sale.status && !isSaving;
 
     const handleDownloadAllFiles = async () => {
         if (typeof JSZip === 'undefined') {
@@ -159,6 +161,7 @@ const SaleDetailView: React.FC<SaleDetailViewProps> = ({ sale, onClose, onUpdate
       sale.portabilityFile2
     ].some(file => !!file);
 
+    const statusOptions = Object.values(SaleStatus).map(s => ({ value: s, label: s }));
 
     return (
         <Card>
@@ -175,6 +178,7 @@ const SaleDetailView: React.FC<SaleDetailViewProps> = ({ sale, onClose, onUpdate
             <div className="border-t border-gray-200 dark:border-gray-800">
                 <dl>
                     <DetailRow label="Nombre Completo" value={sale.fullName} />
+                    <DetailRow label="Teléfono" value={sale.phoneNumber} />
                     <DetailRow label="Fecha de Captura" value={sale.captureDate} />
                     <DetailRow label="Registrado por" value={sale.createdBy} />
                     <DetailRow label="Estado Actual" value={
@@ -197,7 +201,7 @@ const SaleDetailView: React.FC<SaleDetailViewProps> = ({ sale, onClose, onUpdate
                         <Select 
                             id="saleStatus"
                             label="Nuevo Estado"
-                            options={Object.values(SaleStatus)}
+                            options={statusOptions}
                             value={currentStatus}
                             onChange={(e) => setCurrentStatus(e.target.value as SaleStatus)}
                         />
@@ -205,8 +209,9 @@ const SaleDetailView: React.FC<SaleDetailViewProps> = ({ sale, onClose, onUpdate
                     <Button 
                         onClick={handleSaveChanges} 
                         disabled={!hasChanges}
+                        className="min-w-[140px]"
                     >
-                        Guardar Cambios
+                        {isSaving ? '¡Guardado!' : 'Guardar Cambios'}
                     </Button>
                  </div>
             </div>

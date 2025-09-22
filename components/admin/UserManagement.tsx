@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { User, UserRole } from '../../types';
 import Card from '../ui/Card';
 import Input from '../ui/Input';
 import Button from '../ui/Button';
 import Select from '../ui/Select';
+import FileInput from '../ui/FileInput';
+import UserDisplayCard from '../ui/UserDisplayCard';
 
 interface UserManagementProps {
     users: User[];
     onAddUser: (newUser: User) => void;
+    onDeleteUser: (userId: string) => void;
 }
 
 const DocumentArrowDownIcon = (props: React.ComponentProps<'svg'>) => (
@@ -19,11 +22,34 @@ const DocumentArrowDownIcon = (props: React.ComponentProps<'svg'>) => (
 // Roles that can be assigned by an admin. Admin role is excluded.
 const assignableRoles = [UserRole.Capacitacion, UserRole.Asesor, UserRole.Supervisor];
 
-const UserManagement: React.FC<UserManagementProps> = ({ users, onAddUser }) => {
+const UserManagement: React.FC<UserManagementProps> = ({ users, onAddUser, onDeleteUser }) => {
     const [newUsername, setNewUsername] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [newRole, setNewRole] = useState<UserRole>(UserRole.Capacitacion);
+    const [newFullName, setNewFullName] = useState('');
+    const [newDateOfBirth, setNewDateOfBirth] = useState('');
+    const [newProfilePicture, setNewProfilePicture] = useState<File | null>(null);
+    const [newSupervisorId, setNewSupervisorId] = useState('');
     const [error, setError] = useState('');
+
+    const supervisorOptions = useMemo(() => {
+        return users
+            .filter(u => u.role === UserRole.Supervisor)
+            .map(s => ({ value: s.id, label: s.fullName }));
+    }, [users]);
+    
+    const roleOptions = assignableRoles.map(r => ({ value: r, label: r }));
+
+    const resetForm = () => {
+        setNewUsername('');
+        setNewPassword('');
+        setNewRole(UserRole.Capacitacion);
+        setNewFullName('');
+        setNewDateOfBirth('');
+        setNewProfilePicture(null);
+        setNewSupervisorId('');
+        setError('');
+    }
 
     const handleAddUser = (e: React.FormEvent) => {
         e.preventDefault();
@@ -31,7 +57,6 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, onAddUser }) => 
 
         const trimmedUsername = newUsername.trim();
 
-        // Stricter validation for username (must be exactly 8 digits)
         if (!/^\d{8}$/.test(trimmedUsername)) {
             setError('La Clave de Usuario debe ser un número de exactamente 8 dígitos.');
             return;
@@ -40,8 +65,20 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, onAddUser }) => 
             setError('La contraseña debe tener exactamente 10 caracteres.');
             return;
         }
+        if (!newFullName.trim()) {
+            setError('El nombre completo es obligatorio.');
+            return;
+        }
+        if (!newDateOfBirth) {
+            setError('La fecha de nacimiento es obligatoria.');
+            return;
+        }
         if (users.some(user => user.username === trimmedUsername)) {
             setError('La Clave de Usuario ya existe.');
+            return;
+        }
+        if (newRole !== UserRole.Supervisor && !newSupervisorId) {
+            setError('Debe seleccionar un supervisor para este rol.');
             return;
         }
 
@@ -50,12 +87,14 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, onAddUser }) => 
             username: trimmedUsername,
             password: newPassword,
             role: newRole,
+            fullName: newFullName.trim(),
+            dateOfBirth: newDateOfBirth,
+            profilePicture: newProfilePicture || undefined,
+            supervisorId: newSupervisorId || undefined,
         };
         onAddUser(newUser);
-        setNewUsername('');
-        setNewPassword('');
-        setNewRole(UserRole.Capacitacion);
-        alert(`Usuario "${newUser.username}" creado con éxito.`);
+        alert(`Usuario "${newUser.fullName}" creado con éxito.`);
+        resetForm();
     };
 
     const handleExportUsersCSV = () => {
@@ -64,12 +103,15 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, onAddUser }) => 
             return;
         }
 
-        const headers = ['ID', 'Username', 'Role'];
+        const headers = ['ID', 'Username', 'Role', 'Full Name', 'Date of Birth', 'Supervisor ID'];
         const rows = users.map(user => {
             const rowData = [
                 user.id,
                 user.username,
-                user.role
+                user.role,
+                user.fullName,
+                user.dateOfBirth,
+                user.supervisorId
             ];
             return rowData.map(value => {
                 const stringValue = String(value ?? '').replace(/"/g, '""');
@@ -88,13 +130,37 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, onAddUser }) => 
         link.click();
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
+        alert('La exportación ha comenzado. El archivo se guardará en su carpeta de descargas.');
     };
 
+    const handleDelete = (userId: string, userName: string) => {
+        if (window.confirm(`¿Estás seguro de que quieres eliminar al usuario ${userName}? Esta acción no se puede deshacer.`)) {
+            onDeleteUser(userId);
+        }
+    };
+
+    const isSupervisorRequired = newRole !== UserRole.Supervisor;
+
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
             <Card>
                 <h3 className="text-xl font-bold mb-6">Agregar Nuevo Usuario</h3>
                 <form onSubmit={handleAddUser} className="space-y-4">
+                    <Input
+                        id="new-fullName"
+                        label="Nombre Completo"
+                        value={newFullName}
+                        onChange={(e) => setNewFullName(e.target.value)}
+                        required
+                    />
+                     <Input
+                        id="new-dob"
+                        label="Fecha de Nacimiento"
+                        type="date"
+                        value={newDateOfBirth}
+                        onChange={(e) => setNewDateOfBirth(e.target.value)}
+                        required
+                    />
                     <Input
                         id="new-username"
                         label="Clave de Usuario (8 dígitos)"
@@ -119,10 +185,25 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, onAddUser }) => 
                     <Select
                         id="new-role"
                         label="Rol"
-                        options={assignableRoles}
+                        options={roleOptions}
                         value={newRole}
                         onChange={(e) => setNewRole(e.target.value as UserRole)}
                         required
+                    />
+                    <Select
+                        id="new-supervisor"
+                        label="Supervisor Asignado"
+                        options={supervisorOptions}
+                        value={newSupervisorId}
+                        onChange={(e) => setNewSupervisorId(e.target.value)}
+                        required={isSupervisorRequired}
+                    />
+                    <FileInput
+                        id="new-profile-pic"
+                        label="Foto de Perfil"
+                        value={newProfilePicture}
+                        onChange={setNewProfilePicture}
+                        optional
                     />
                     {error && <p className="text-sm text-red-500">{error}</p>}
                     <div className="text-right pt-2">
@@ -142,17 +223,19 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, onAddUser }) => 
                         Exportar a CSV
                     </Button>
                 </div>
-                <div className="space-y-3 max-h-[25rem] overflow-y-auto pr-2">
-                    {users.map(user => (
-                        <div key={user.id} className="flex justify-between items-center bg-gray-100 dark:bg-gray-800 p-3 rounded-md">
-                            <div>
-                                <p className="font-semibold text-black dark:text-white">{user.username}</p>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">ID: {user.id}</p>
-                            </div>
-                            <span className={`px-2 py-1 text-xs font-semibold rounded-full ${user.role === UserRole.Admin ? 'bg-black text-white dark:bg-white dark:text-black' : 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200'}`}>
-                                {user.role}
-                            </span>
-                        </div>
+                <div className="space-y-3 max-h-[34rem] overflow-y-auto pr-2">
+                    {users.map(u => (
+                         <UserDisplayCard key={u.id} user={u}>
+                            {u.role !== UserRole.Admin && (
+                                <Button 
+                                    variant="secondary" 
+                                    onClick={() => handleDelete(u.id, u.fullName)} 
+                                    className="!px-2 !py-1 text-xs text-red-600 dark:text-red-400 border-red-300 dark:border-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                                >
+                                    Borrar
+                                </Button>
+                            )}
+                        </UserDisplayCard>
                     ))}
                 </div>
             </Card>

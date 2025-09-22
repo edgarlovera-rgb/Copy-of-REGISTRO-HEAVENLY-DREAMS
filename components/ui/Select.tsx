@@ -4,7 +4,7 @@ import React from 'react';
 interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
     label: string;
     id: string;
-    options: string[];
+    options: { value: string; label: string }[];
 }
 
 const Select: React.FC<SelectProps> = ({ label, id, options, ...props }) => {
@@ -20,7 +20,7 @@ const Select: React.FC<SelectProps> = ({ label, id, options, ...props }) => {
             >
                 <option value="">Seleccione una opción</option>
                 {options.map((option) => (
-                    <option key={option} value={option}>{option}</option>
+                    <option key={option.value} value={option.value}>{option.label}</option>
                 ))}
             </select>
         </div>

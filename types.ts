@@ -31,6 +31,7 @@ export enum SaleStatus {
 export interface Sale {
   id: string;
   fullName: string;
+  phoneNumber: string;
   captureDate: string;
   folioSIAC: string;
   serviceType: ServiceType;
@@ -60,4 +61,8 @@ export interface User {
     username: string; // This will be the 8-digit key for non-admin users
     password?: string;
     role: UserRole;
+    fullName: string;
+    dateOfBirth: string;
+    profilePicture?: File;
+    supervisorId?: string;
 }

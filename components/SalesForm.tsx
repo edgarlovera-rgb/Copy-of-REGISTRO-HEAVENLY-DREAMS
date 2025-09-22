@@ -17,6 +17,7 @@ interface SalesFormProps {
 const SalesForm: React.FC<SalesFormProps> = ({ onAddSale, user }) => {
     const formRef = useRef<HTMLFormElement>(null);
     const [fullName, setFullName] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
     const [captureDate, setCaptureDate] = useState(new Date().toISOString().split('T')[0]);
     const [folioSIAC, setFolioSIAC] = useState('');
     const [serviceType, setServiceType] = useState<ServiceType>(ServiceType.Residencial);
@@ -24,6 +25,7 @@ const SalesForm: React.FC<SalesFormProps> = ({ onAddSale, user }) => {
     const [selectedPackage, setSelectedPackage] = useState('');
     const [customerType, setCustomerType] = useState<CustomerType>(CustomerType.LineaNueva);
     const [idType, setIdType] = useState<IdType>(IdType.INE);
+    const [errors, setErrors] = useState<{ [key: string]: string }>({});
     
     // File states
     const [folioSIACFile, setFolioSIACFile] = useState<File | null>(null);
@@ -33,12 +35,14 @@ const SalesForm: React.FC<SalesFormProps> = ({ onAddSale, user }) => {
     const [portabilityFile1, setPortabilityFile1] = useState<File | null>(null);
     const [portabilityFile2, setPortabilityFile2] = useState<File | null>(null);
 
-    const availablePackages = useMemo(() => {
-        return PACKAGE_OPTIONS[serviceType]?.[packageType] || [];
+    const packageOptions = useMemo(() => {
+        const packages = PACKAGE_OPTIONS[serviceType]?.[packageType] || [];
+        return packages.map(pkg => ({ value: pkg, label: pkg }));
     }, [serviceType, packageType]);
 
     const resetForm = useCallback(() => {
         setFullName('');
+        setPhoneNumber('');
         setCaptureDate(new Date().toISOString().split('T')[0]);
         setFolioSIAC('');
         setServiceType(ServiceType.Residencial);
@@ -52,6 +56,7 @@ const SalesForm: React.FC<SalesFormProps> = ({ onAddSale, user }) => {
         setProofOfAddressFile(null);
         setPortabilityFile1(null);
         setPortabilityFile2(null);
+        setErrors({});
         formRef.current?.reset();
     }, []);
 
@@ -69,12 +74,34 @@ const SalesForm: React.FC<SalesFormProps> = ({ onAddSale, user }) => {
         }
     };
 
+    const validateForm = (): boolean => {
+        const newErrors: { [key: string]: string } = {};
+
+        if (!/^[a-zA-Z\s]+$/.test(fullName)) {
+            newErrors.fullName = 'El nombre solo debe contener letras y espacios.';
+        }
+        if (!/^\d{10}$/.test(phoneNumber)) {
+            newErrors.phoneNumber = 'El número de teléfono debe tener exactamente 10 dígitos.';
+        }
+        if (!/^\d+$/.test(folioSIAC)) {
+            newErrors.folioSIAC = 'El Folio SIAC solo debe contener números.';
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        
+        if (!validateForm()) {
+            return;
+        }
         
         const newSale: Sale = {
             id: crypto.randomUUID(),
             fullName,
+            phoneNumber,
             captureDate,
             folioSIAC,
             serviceType,
@@ -101,9 +128,19 @@ const SalesForm: React.FC<SalesFormProps> = ({ onAddSale, user }) => {
             <h2 className="text-2xl font-bold mb-6 text-black dark:text-white">Registrar Nueva Venta</h2>
             <form onSubmit={handleSubmit} className="space-y-6" ref={formRef}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <Input id="fullName" label="Nombre y Apellido" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
+                    <div>
+                        <Input id="fullName" label="Nombre y Apellido" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
+                        {errors.fullName && <p className="text-sm text-red-500 mt-1">{errors.fullName}</p>}
+                    </div>
+                    <div>
+                        <Input id="phoneNumber" label="Teléfono (10 dígitos)" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} required maxLength={10} />
+                        {errors.phoneNumber && <p className="text-sm text-red-500 mt-1">{errors.phoneNumber}</p>}
+                    </div>
                     <Input id="captureDate" label="Fecha de Captura" type="date" value={captureDate} onChange={(e) => setCaptureDate(e.target.value)} required />
-                    <Input id="folioSIAC" label="Folio SIAC" value={folioSIAC} onChange={(e) => setFolioSIAC(e.target.value)} required />
+                    <div>
+                        <Input id="folioSIAC" label="Folio SIAC" value={folioSIAC} onChange={(e) => setFolioSIAC(e.target.value)} required />
+                        {errors.folioSIAC && <p className="text-sm text-red-500 mt-1">{errors.folioSIAC}</p>}
+                    </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-gray-200 dark:border-gray-800">
@@ -111,7 +148,7 @@ const SalesForm: React.FC<SalesFormProps> = ({ onAddSale, user }) => {
                     <RadioGroup label="Tipo de Paquete" name="packageType" options={Object.values(PackageType)} selectedValue={packageType} onChange={(v) => { setPackageType(v); setSelectedPackage(''); }} />
                 </div>
 
-                <Select id="selectedPackage" label="Paquete" options={availablePackages} value={selectedPackage} onChange={(e) => setSelectedPackage(e.target.value)} required />
+                <Select id="selectedPackage" label="Paquete" options={packageOptions} value={selectedPackage} onChange={(e) => setSelectedPackage(e.target.value)} required />
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-gray-200 dark:border-gray-800">
                     <RadioGroup label="Tipo de Cliente" name="customerType" options={Object.values(CustomerType)} selectedValue={customerType} onChange={handleCustomerTypeChange} />

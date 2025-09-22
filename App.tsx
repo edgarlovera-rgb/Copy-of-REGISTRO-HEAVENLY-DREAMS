@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback } from 'react';
 import LoginScreen from './components/LoginScreen';
 import Dashboard from './components/Dashboard';
@@ -6,7 +5,14 @@ import { User, UserRole, Sale } from './types';
 
 // Initial admin user as per requirements
 const initialUsers: User[] = [
-    { id: 'admin-user', username: 'edgarlovera@heavenlyndreams.com.mx', password: 'Lovera9984+', role: UserRole.Admin },
+    { 
+        id: 'admin-user', 
+        username: 'edgarlovera@heavenlyndreams.com.mx', 
+        password: 'Lovera9984+', 
+        role: UserRole.Admin,
+        fullName: 'Edgar Lovera',
+        dateOfBirth: '1990-01-01',
+    },
 ];
 
 function App() {
@@ -39,6 +45,14 @@ function App() {
         setUsers(prevUsers => [...prevUsers, newUser]);
     }, []);
 
+    const handleDeleteUser = useCallback((userId: string) => {
+        if (userId === 'admin-user') {
+            alert('La cuenta de administrador no se puede eliminar.');
+            return;
+        }
+        setUsers(prevUsers => prevUsers.filter(u => u.id !== userId));
+    }, []);
+
     return (
         <div className="min-h-screen font-sans bg-gray-100 dark:bg-black text-gray-800 dark:text-gray-200">
             {user ? (
@@ -50,6 +64,7 @@ function App() {
                     onUpdateSale={handleUpdateSale}
                     users={users}
                     onAddUser={handleAddUser}
+                    onDeleteUser={handleDeleteUser}
                 />
             ) : (
                 <LoginScreen onLogin={handleLogin} />

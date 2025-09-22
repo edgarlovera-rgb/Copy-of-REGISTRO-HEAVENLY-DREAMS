@@ -95,7 +95,7 @@ const FolioSearch: React.FC<FolioSearchProps> = ({ sales, onSaleSelect }) => {
         }
 
         const headers = [
-            'ID', 'Nombre Completo', 'Fecha de Captura', 'Folio SIAC',
+            'ID', 'Nombre Completo', 'Teléfono', 'Fecha de Captura', 'Folio SIAC',
             'Tipo de Servicio', 'Tipo de Paquete', 'Paquete Seleccionado',
             'Tipo de Cliente', 'Tipo de Identificación', 'Estado', 'Registrado Por',
             'Archivo Folio SIAC', 'Archivo ID 1', 'Archivo ID 2',
@@ -106,6 +106,7 @@ const FolioSearch: React.FC<FolioSearchProps> = ({ sales, onSaleSelect }) => {
             const rowData = [
                 sale.id,
                 sale.fullName,
+                sale.phoneNumber,
                 sale.captureDate,
                 sale.folioSIAC,
                 sale.serviceType,
@@ -142,6 +143,10 @@ const FolioSearch: React.FC<FolioSearchProps> = ({ sales, onSaleSelect }) => {
         URL.revokeObjectURL(url);
     };
 
+    const serviceOptions = Object.values(ServiceType).map(s => ({ value: s, label: s }));
+    const packageOptions = Object.values(PackageType).map(p => ({ value: p, label: p }));
+    const statusOptions = Object.values(SaleStatus).map(s => ({ value: s, label: s }));
+
 
     return (
         <Card>
@@ -161,9 +166,9 @@ const FolioSearch: React.FC<FolioSearchProps> = ({ sales, onSaleSelect }) => {
                 <div className="mb-6 p-4 bg-gray-100 dark:bg-gray-950 rounded-lg">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <Input id="filterDate" label="Fecha de Captura" type="date" value={filterDate} onChange={(e) => setFilterDate(e.target.value)} />
-                        <Select id="filterService" label="Tipo de Servicio" options={Object.values(ServiceType)} value={filterService} onChange={(e) => setFilterService(e.target.value)} />
-                        <Select id="filterPackage" label="Tipo de Paquete" options={Object.values(PackageType)} value={filterPackage} onChange={(e) => setFilterPackage(e.target.value)} />
-                        <Select id="filterStatus" label="Estado" options={Object.values(SaleStatus)} value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} />
+                        <Select id="filterService" label="Tipo de Servicio" options={serviceOptions} value={filterService} onChange={(e) => setFilterService(e.target.value)} />
+                        <Select id="filterPackage" label="Tipo de Paquete" options={packageOptions} value={filterPackage} onChange={(e) => setFilterPackage(e.target.value)} />
+                        <Select id="filterStatus" label="Estado" options={statusOptions} value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} />
                     </div>
                     <div className="mt-4 flex justify-end">
                         <Button variant="secondary" onClick={handleClearFilters}>Limpiar Filtros</Button>
