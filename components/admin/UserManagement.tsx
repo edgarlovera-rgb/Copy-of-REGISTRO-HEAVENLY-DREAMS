@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { User, UserRole } from '../../types';
 import Card from '../ui/Card';
@@ -17,21 +16,29 @@ const DocumentArrowDownIcon = (props: React.ComponentProps<'svg'>) => (
     </svg>
 );
 
+// Roles that can be assigned by an admin. Admin role is excluded.
+const assignableRoles = [UserRole.Capacitacion, UserRole.Asesor, UserRole.Supervisor];
+
 const UserManagement: React.FC<UserManagementProps> = ({ users, onAddUser }) => {
     const [newUsername, setNewUsername] = useState('');
     const [newPassword, setNewPassword] = useState('');
-    const [newRole, setNewRole] = useState<UserRole>(UserRole.User);
+    const [newRole, setNewRole] = useState<UserRole>(UserRole.Capacitacion);
     const [error, setError] = useState('');
 
     const handleAddUser = (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
-        if (!newUsername.trim() || !newPassword.trim()) {
-            setError('El nombre de usuario y la contraseña no pueden estar vacíos.');
+
+        if (!/^\d{8}$/.test(newUsername)) {
+            setError('La clave de usuario debe contener exactamente 8 dígitos numéricos.');
+            return;
+        }
+        if (newPassword.length !== 10) {
+            setError('La contraseña debe tener exactamente 10 caracteres.');
             return;
         }
         if (users.some(user => user.username.toLowerCase() === newUsername.toLowerCase())) {
-            setError('El nombre de usuario ya existe.');
+            setError('La clave de usuario ya existe.');
             return;
         }
 
@@ -44,7 +51,7 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, onAddUser }) => 
         onAddUser(newUser);
         setNewUsername('');
         setNewPassword('');
-        setNewRole(UserRole.User);
+        setNewRole(UserRole.Capacitacion);
         alert(`Usuario "${newUser.username}" creado con éxito.`);
     };
 
@@ -61,7 +68,6 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, onAddUser }) => 
                 user.username,
                 user.role
             ];
-            // Escape quotes and wrap in double quotes
             return rowData.map(value => {
                 const stringValue = String(value ?? '').replace(/"/g, '""');
                 return `"${stringValue}"`;
@@ -88,23 +94,29 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, onAddUser }) => 
                 <form onSubmit={handleAddUser} className="space-y-4">
                     <Input
                         id="new-username"
-                        label="Nombre de Usuario"
+                        label="Clave de Usuario (8 dígitos)"
                         value={newUsername}
                         onChange={(e) => setNewUsername(e.target.value)}
                         required
+                        pattern="\d{8}"
+                        title="La clave debe ser de 8 dígitos numéricos."
+                        maxLength={8}
                     />
                     <Input
                         id="new-password"
-                        label="Contraseña"
+                        label="Contraseña (10 caracteres)"
                         type="password"
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
                         required
+                        minLength={10}
+                        maxLength={10}
+                        title="La contraseña debe tener 10 caracteres."
                     />
                     <Select
                         id="new-role"
                         label="Rol"
-                        options={Object.values(UserRole)}
+                        options={assignableRoles}
                         value={newRole}
                         onChange={(e) => setNewRole(e.target.value as UserRole)}
                         required
@@ -127,7 +139,7 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, onAddUser }) => 
                         Exportar a CSV
                     </Button>
                 </div>
-                <div className="space-y-3 max-h-96 overflow-y-auto pr-2">
+                <div className="space-y-3 max-h-[25rem] overflow-y-auto pr-2">
                     {users.map(user => (
                         <div key={user.id} className="flex justify-between items-center bg-gray-100 dark:bg-gray-800 p-3 rounded-md">
                             <div>

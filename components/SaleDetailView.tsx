@@ -6,6 +6,8 @@ import Button from './ui/Button';
 import Select from './ui/Select';
 import { STATUS_COLORS } from '../constants';
 
+declare const JSZip: any;
+
 interface SaleDetailViewProps {
     sale: Sale;
     onClose: () => void;
@@ -26,8 +28,6 @@ const FileInfo: React.FC<{ label: string; file?: File }> = ({ label, file }) => 
         if (file) {
             const url = URL.createObjectURL(file);
             setFileUrl(url);
-
-            // Clean up the object URL when the component unmounts or the file changes
             return () => {
                 URL.revokeObjectURL(url);
             };
@@ -38,15 +38,11 @@ const FileInfo: React.FC<{ label: string; file?: File }> = ({ label, file }) => 
 
     const handleLinkClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
         if (!file || !fileUrl) return;
-
-        // Define file types that are safe to open directly in the browser
         const viewableTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'application/pdf'];
-        
         if (viewableTypes.includes(file.type)) {
-            event.preventDefault(); // Prevent the default download behavior
-            window.open(fileUrl, '_blank', 'noopener,noreferrer'); // Open in a new tab
+            event.preventDefault();
+            window.open(fileUrl, '_blank', 'noopener,noreferrer');
         }
-        // For other file types, the default browser behavior (download) will proceed.
     };
 
     return (
@@ -90,7 +86,6 @@ const SaleDetailView: React.FC<SaleDetailViewProps> = ({ sale, onClose, onUpdate
     const [currentStatus, setCurrentStatus] = useState<SaleStatus>(sale.status);
 
     useEffect(() => {
-        // Reset local status if the sale prop changes (e.g., viewing another sale)
         setCurrentStatus(sale.status);
     }, [sale]);
 
@@ -100,45 +95,59 @@ const SaleDetailView: React.FC<SaleDetailViewProps> = ({ sale, onClose, onUpdate
 
     const hasChanges = currentStatus !== sale.status;
 
-    const handleDownloadAllFiles = () => {
-        const filesToDownload: { file: File, name: string }[] = [];
+    const handleDownloadAllFiles = async () => {
+        if (typeof JSZip === 'undefined') {
+            alert('La librería para comprimir archivos no está disponible. Por favor, recargue la página.');
+            return;
+        }
+
+        const zip = new JSZip();
+        const filesToZip: { file: File, name: string }[] = [];
         const folio = sale.folioSIAC.replace(/[^a-z0-9]/gi, '_') || 'SIN_FOLIO';
 
-        const addFile = (file: File | undefined, baseName: string) => {
+        const addFileToList = (file: File | undefined, baseName: string) => {
             if (file) {
                 const extension = file.name.split('.').pop() || 'file';
-                filesToDownload.push({ file, name: `${folio}_${baseName}.${extension}` });
+                filesToZip.push({ file, name: `${folio}_${baseName}.${extension}` });
             }
         };
 
-        addFile(sale.folioSIACFile, 'FolioSIAC');
+        addFileToList(sale.folioSIACFile, 'FolioSIAC');
         if (sale.idType === IdType.INE) {
-            addFile(sale.idFile1, 'INE_Frente');
-            addFile(sale.idFile2, 'INE_Reverso');
+            addFileToList(sale.idFile1, 'INE_Frente');
+            addFileToList(sale.idFile2, 'INE_Reverso');
         } else {
-            addFile(sale.idFile1, 'CURP');
+            addFileToList(sale.idFile1, 'CURP');
         }
-        addFile(sale.proofOfAddressFile, 'Comprobante_Domicilio');
+        addFileToList(sale.proofOfAddressFile, 'Comprobante_Domicilio');
         if (sale.customerType === CustomerType.Portabilidad) {
-            addFile(sale.portabilityFile1, 'Portabilidad_1');
-            addFile(sale.portabilityFile2, 'Portabilidad_2');
+            addFileToList(sale.portabilityFile1, 'Portabilidad_1');
+            addFileToList(sale.portabilityFile2, 'Portabilidad_2');
         }
         
-        if (filesToDownload.length === 0) {
+        if (filesToZip.length === 0) {
             alert('No hay archivos adjuntos para descargar.');
             return;
         }
 
-        filesToDownload.forEach(({ file, name }) => {
-            const url = URL.createObjectURL(file);
+        for (const { file, name } of filesToZip) {
+            zip.file(name, file);
+        }
+
+        try {
+            const zipBlob = await zip.generateAsync({ type: 'blob' });
+            const url = URL.createObjectURL(zipBlob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = name;
+            link.download = `Folio_${folio}.zip`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            setTimeout(() => URL.revokeObjectURL(url), 100);
-        });
+            URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Error creating zip file:', error);
+            alert('Ocurrió un error al generar el archivo .zip.');
+        }
     };
     
     const hasFiles = [

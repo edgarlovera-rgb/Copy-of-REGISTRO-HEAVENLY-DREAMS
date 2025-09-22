@@ -49,13 +49,15 @@ export interface Sale {
 }
 
 export enum UserRole {
-    Admin = 'admin',
-    User = 'user',
+    Admin = 'Administrador',
+    Capacitacion = 'Persona en Capacitación',
+    Asesor = 'Asesor',
+    Supervisor = 'Supervisor',
 }
 
 export interface User {
     id: string;
-    username: string;
-    password?: string; // Password should be handled securely on a backend
+    username: string; // This will be the 8-digit key for non-admin users
+    password?: string;
     role: UserRole;
 }

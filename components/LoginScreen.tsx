@@ -24,7 +24,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-black px-4">
+        <div className="flex items-center justify-center min-h-screen px-4">
             <div className="w-full max-w-md">
                  <div className="text-center mb-8">
                     <Logo className="h-16 w-auto mb-4 mx-auto" />
@@ -58,10 +58,6 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                         </Button>
                     </form>
                 </Card>
-                 <p className="text-center text-xs text-gray-500 mt-4">
-                    Usuario admin: <code className="bg-gray-200 dark:bg-gray-800 px-1 rounded">admin</code>, 
-                    Contraseña: <code className="bg-gray-200 dark:bg-gray-800 px-1 rounded">admin123</code>
-                </p>
             </div>
         </div>
     );

@@ -37,7 +37,6 @@ const Dashboard: React.FC<DashboardProps> = ({ user, onLogout, sales, onAddSale,
         if (saleToUpdate) {
             const updatedSale = { ...saleToUpdate, status: newStatus };
             onUpdateSale(updatedSale);
-            // If the updated sale is the one being viewed, update the detail view state as well
             if (selectedSale && selectedSale.id === saleId) {
                 setSelectedSale(updatedSale);
             }
@@ -93,7 +92,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, onLogout, sales, onAddSale,
 
 
     return (
-        <div className="min-h-screen bg-gray-100 dark:bg-black">
+        <div className="min-h-screen">
             <header className="bg-white dark:bg-gray-950 shadow-md sticky top-0 z-10 border-b border-gray-200 dark:border-gray-800">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center h-16">

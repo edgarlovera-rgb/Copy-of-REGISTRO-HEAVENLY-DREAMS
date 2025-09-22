@@ -4,10 +4,9 @@ import LoginScreen from './components/LoginScreen';
 import Dashboard from './components/Dashboard';
 import { User, UserRole, Sale } from './types';
 
-// Mock data - in a real app, this would come from a database
+// Initial admin user as per requirements
 const initialUsers: User[] = [
-    { id: '1', username: 'admin', password: 'admin123', role: UserRole.Admin },
-    { id: '2', username: 'vendedor1', password: 'password', role: UserRole.User },
+    { id: 'admin-user', username: 'edgarlovera@heavenlyndreams.com.mx', password: 'Lovera9984+', role: UserRole.Admin },
 ];
 
 function App() {
@@ -16,7 +15,7 @@ function App() {
     const [sales, setSales] = useState<Sale[]>([]);
 
     const handleLogin = useCallback((username: string, password: string): boolean => {
-        const foundUser = users.find(u => u.username === username && u.password === password);
+        const foundUser = users.find(u => u.username.toLowerCase() === username.toLowerCase() && u.password === password);
         if (foundUser) {
             setUser(foundUser);
             return true;
@@ -41,7 +40,7 @@ function App() {
     }, []);
 
     return (
-        <div className="min-h-screen font-sans text-gray-800 dark:text-gray-200">
+        <div className="min-h-screen font-sans bg-gray-100 dark:bg-black text-gray-800 dark:text-gray-200">
             {user ? (
                 <Dashboard 
                     user={user} 
