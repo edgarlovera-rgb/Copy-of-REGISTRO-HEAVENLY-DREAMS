@@ -20,7 +20,7 @@ const DocumentArrowDownIcon = (props: React.ComponentProps<'svg'>) => (
 
 const FolioCard: React.FC<{ sale: Sale; onSelect: () => void }> = ({ sale, onSelect }) => (
     <div 
-        className="bg-slate-50 dark:bg-slate-700/50 p-4 rounded-lg border border-slate-200 dark:border-slate-700 space-y-2 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+        className="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg border border-gray-200 dark:border-gray-800 space-y-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
         onClick={onSelect}
         role="button"
         tabIndex={0}
@@ -29,14 +29,14 @@ const FolioCard: React.FC<{ sale: Sale; onSelect: () => void }> = ({ sale, onSel
     >
         <div className="flex justify-between items-start">
             <div>
-                <p className="font-bold text-indigo-600 dark:text-indigo-400">{sale.folioSIAC}</p>
-                <p className="text-sm text-slate-600 dark:text-slate-300">{sale.fullName}</p>
+                <p className="font-bold text-black dark:text-white">{sale.folioSIAC}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">{sale.fullName}</p>
             </div>
             <span className={`px-2 py-1 text-xs font-semibold rounded-full ${STATUS_COLORS[sale.status]}`}>
                 {sale.status}
             </span>
         </div>
-        <p className="text-xs text-slate-500 dark:text-slate-400">
+        <p className="text-xs text-gray-500 dark:text-gray-400">
             {sale.captureDate} &bull; {sale.serviceType} &bull; {sale.packageType}
         </p>
         <p className="text-sm pt-1">{sale.selectedPackage}</p>
@@ -146,7 +146,7 @@ const FolioSearch: React.FC<FolioSearchProps> = ({ sales, onSaleSelect }) => {
     return (
         <Card>
             <div className="flex flex-wrap gap-2 justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Consultar Folios</h2>
+                <h2 className="text-2xl font-bold text-black dark:text-white">Consultar Folios</h2>
                 <div className="flex items-center gap-2">
                     <Button variant="secondary" onClick={() => setShowAdvanced(!showAdvanced)}>
                         {showAdvanced ? 'Ocultar Filtros' : 'Filtros Avanzados'}
@@ -158,7 +158,7 @@ const FolioSearch: React.FC<FolioSearchProps> = ({ sales, onSaleSelect }) => {
             </div>
             
             {showAdvanced && (
-                <div className="mb-6 p-4 bg-slate-100 dark:bg-slate-800/50 rounded-lg">
+                <div className="mb-6 p-4 bg-gray-100 dark:bg-gray-950 rounded-lg">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <Input id="filterDate" label="Fecha de Captura" type="date" value={filterDate} onChange={(e) => setFilterDate(e.target.value)} />
                         <Select id="filterService" label="Tipo de Servicio" options={Object.values(ServiceType)} value={filterService} onChange={(e) => setFilterService(e.target.value)} />
@@ -180,7 +180,7 @@ const FolioSearch: React.FC<FolioSearchProps> = ({ sales, onSaleSelect }) => {
             />
             <div className="mt-6">
                 {sales.length === 0 ? (
-                    <div className="text-center py-8 text-slate-500 dark:text-slate-400">
+                    <div className="text-center py-8 text-gray-500 dark:text-gray-400">
                         <p>No hay ventas registradas todavía.</p>
                     </div>
                 ) : filteredSales.length > 0 ? (
@@ -190,7 +190,7 @@ const FolioSearch: React.FC<FolioSearchProps> = ({ sales, onSaleSelect }) => {
                         ))}
                     </div>
                 ) : (
-                    <div className="text-center py-8 text-slate-500 dark:text-slate-400">
+                    <div className="text-center py-8 text-gray-500 dark:text-gray-400">
                         <p>No se encontraron resultados para los filtros aplicados.</p>
                     </div>
                 )}

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { User, UserRole } from '../../types';
 import Card from '../ui/Card';
@@ -128,12 +129,12 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, onAddUser }) => 
                 </div>
                 <div className="space-y-3 max-h-96 overflow-y-auto pr-2">
                     {users.map(user => (
-                        <div key={user.id} className="flex justify-between items-center bg-slate-100 dark:bg-slate-700/50 p-3 rounded-md">
+                        <div key={user.id} className="flex justify-between items-center bg-gray-100 dark:bg-gray-800 p-3 rounded-md">
                             <div>
-                                <p className="font-semibold text-slate-800 dark:text-slate-100">{user.username}</p>
-                                <p className="text-sm text-slate-500 dark:text-slate-400">ID: {user.id}</p>
+                                <p className="font-semibold text-black dark:text-white">{user.username}</p>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">ID: {user.id}</p>
                             </div>
-                            <span className={`px-2 py-1 text-xs font-semibold rounded-full ${user.role === UserRole.Admin ? 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200' : 'bg-slate-200 text-slate-800 dark:bg-slate-600 dark:text-slate-200'}`}>
+                            <span className={`px-2 py-1 text-xs font-semibold rounded-full ${user.role === UserRole.Admin ? 'bg-black text-white dark:bg-white dark:text-black' : 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200'}`}>
                                 {user.role}
                             </span>
                         </div>

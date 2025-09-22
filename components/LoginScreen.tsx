@@ -24,12 +24,12 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-slate-100 dark:bg-slate-900 px-4">
+        <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-black px-4">
             <div className="w-full max-w-md">
                  <div className="text-center mb-8">
                     <Logo className="h-16 w-auto mb-4 mx-auto" />
-                    <h1 className="text-4xl font-bold text-indigo-600 dark:text-indigo-400">Portal de Ventas SIAC</h1>
-                    <p className="text-slate-600 dark:text-slate-400 mt-2">Bienvenido, por favor inicie sesión.</p>
+                    <h1 className="text-4xl font-bold text-black dark:text-white">Portal de Ventas SIAC</h1>
+                    <p className="text-gray-600 dark:text-gray-400 mt-2">Bienvenido, por favor inicie sesión.</p>
                 </div>
                 <Card>
                     <form onSubmit={handleSubmit} className="space-y-6">
@@ -42,6 +42,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                             required
                             autoComplete="username"
                         />
+
                         <Input
                             id="password"
                             label="Contraseña"
@@ -57,9 +58,9 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                         </Button>
                     </form>
                 </Card>
-                 <p className="text-center text-xs text-slate-500 mt-4">
-                    Usuario admin: <code className="bg-slate-200 dark:bg-slate-700 px-1 rounded">admin</code>, 
-                    Contraseña: <code className="bg-slate-200 dark:bg-slate-700 px-1 rounded">admin123</code>
+                 <p className="text-center text-xs text-gray-500 mt-4">
+                    Usuario admin: <code className="bg-gray-200 dark:bg-gray-800 px-1 rounded">admin</code>, 
+                    Contraseña: <code className="bg-gray-200 dark:bg-gray-800 px-1 rounded">admin123</code>
                 </p>
             </div>
         </div>

@@ -53,14 +53,14 @@ const Dashboard: React.FC<DashboardProps> = ({ user, onLogout, sales, onAddSale,
     }, [sales, user]);
 
     const renderAdminTabs = () => (
-        <div className="mb-6 border-b border-slate-200 dark:border-slate-700">
+        <div className="mb-6 border-b border-gray-200 dark:border-gray-800">
             <nav className="-mb-px flex space-x-6" aria-label="Tabs">
                 <button
                     onClick={() => setActiveTab('sales')}
                     className={`${
                         activeTab === 'sales'
-                            ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400'
-                            : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:border-slate-600'
+                            ? 'border-black text-black dark:border-white dark:text-white'
+                            : 'border-transparent text-gray-500 hover:text-gray-800 hover:border-gray-300 dark:text-gray-400 dark:hover:text-white dark:hover:border-gray-600'
                     } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors`}
                 >
                     Ventas
@@ -69,8 +69,8 @@ const Dashboard: React.FC<DashboardProps> = ({ user, onLogout, sales, onAddSale,
                     onClick={() => setActiveTab('users')}
                     className={`${
                         activeTab === 'users'
-                            ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400'
-                            : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:border-slate-600'
+                            ? 'border-black text-black dark:border-white dark:text-white'
+                            : 'border-transparent text-gray-500 hover:text-gray-800 hover:border-gray-300 dark:text-gray-400 dark:hover:text-white dark:hover:border-gray-600'
                     } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors`}
                     aria-current={activeTab === 'users' ? 'page' : undefined}
                 >
@@ -93,18 +93,18 @@ const Dashboard: React.FC<DashboardProps> = ({ user, onLogout, sales, onAddSale,
 
 
     return (
-        <div className="min-h-screen bg-slate-100 dark:bg-slate-900">
-            <header className="bg-white dark:bg-slate-800 shadow-md sticky top-0 z-10">
+        <div className="min-h-screen bg-gray-100 dark:bg-black">
+            <header className="bg-white dark:bg-gray-950 shadow-md sticky top-0 z-10 border-b border-gray-200 dark:border-gray-800">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center h-16">
                         <div className="flex items-center space-x-3">
                             <Logo className="h-8 w-auto" />
-                            <h1 className="text-xl font-bold text-indigo-600 dark:text-indigo-400">
+                            <h1 className="text-xl font-bold text-black dark:text-white">
                                 Portal de Ventas SIAC
                             </h1>
                         </div>
                         <div className="flex items-center space-x-4">
-                            <span className="text-sm font-medium text-slate-600 dark:text-slate-300">
+                            <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
                                 Hola, {user.username} ({user.role})
                             </span>
                             <Button variant="secondary" onClick={onLogout}>

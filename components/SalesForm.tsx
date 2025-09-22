@@ -98,7 +98,7 @@ const SalesForm: React.FC<SalesFormProps> = ({ onAddSale, user }) => {
 
     return (
         <Card>
-            <h2 className="text-2xl font-bold mb-6 text-slate-800 dark:text-slate-100">Registrar Nueva Venta</h2>
+            <h2 className="text-2xl font-bold mb-6 text-black dark:text-white">Registrar Nueva Venta</h2>
             <form onSubmit={handleSubmit} className="space-y-6" ref={formRef}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <Input id="fullName" label="Nombre y Apellido" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
@@ -106,19 +106,19 @@ const SalesForm: React.FC<SalesFormProps> = ({ onAddSale, user }) => {
                     <Input id="folioSIAC" label="Folio SIAC" value={folioSIAC} onChange={(e) => setFolioSIAC(e.target.value)} required />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-200 dark:border-slate-700">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-gray-200 dark:border-gray-800">
                     <RadioGroup label="Tipo de Servicio" name="serviceType" options={Object.values(ServiceType)} selectedValue={serviceType} onChange={(v) => { setServiceType(v); setSelectedPackage(''); }} />
                     <RadioGroup label="Tipo de Paquete" name="packageType" options={Object.values(PackageType)} selectedValue={packageType} onChange={(v) => { setPackageType(v); setSelectedPackage(''); }} />
                 </div>
 
                 <Select id="selectedPackage" label="Paquete" options={availablePackages} value={selectedPackage} onChange={(e) => setSelectedPackage(e.target.value)} required />
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-200 dark:border-slate-700">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-gray-200 dark:border-gray-800">
                     <RadioGroup label="Tipo de Cliente" name="customerType" options={Object.values(CustomerType)} selectedValue={customerType} onChange={handleCustomerTypeChange} />
                 </div>
                 
-                <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
-                  <h3 className="text-lg font-semibold mb-4 text-slate-800 dark:text-slate-200">Carga de Documentos</h3>
+                <div className="pt-4 border-t border-gray-200 dark:border-gray-800">
+                  <h3 className="text-lg font-semibold mb-4 text-black dark:text-white">Carga de Documentos</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <FileInput id="folioSIACFile" label="Captura del Folio SIAC" value={folioSIACFile} onChange={setFolioSIACFile} />
                       

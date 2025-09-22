@@ -50,8 +50,8 @@ export const PACKAGE_OPTIONS: PackageOptions = {
 };
 
 export const STATUS_COLORS: { [key in SaleStatus]: string } = {
-    [SaleStatus.Pendiente]: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
-    [SaleStatus.Cancelado]: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
-    [SaleStatus.Posteado]: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
-    [SaleStatus.ProcesoInstalacion]: 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-200',
+    [SaleStatus.Pendiente]: 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200',
+    [SaleStatus.Cancelado]: 'bg-gray-800 text-white dark:bg-gray-300 dark:text-black',
+    [SaleStatus.Posteado]: 'bg-black text-white dark:bg-white dark:text-black',
+    [SaleStatus.ProcesoInstalacion]: 'bg-gray-400 text-black dark:bg-gray-500 dark:text-white',
 };

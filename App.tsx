@@ -41,7 +41,7 @@ function App() {
     }, []);
 
     return (
-        <div className="min-h-screen font-sans text-slate-800 dark:text-slate-200">
+        <div className="min-h-screen font-sans text-gray-800 dark:text-gray-200">
             {user ? (
                 <Dashboard 
                     user={user} 
